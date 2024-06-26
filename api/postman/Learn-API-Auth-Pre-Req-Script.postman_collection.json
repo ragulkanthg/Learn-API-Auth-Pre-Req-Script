@@ -1,0 +1,133 @@
+{
+	"info": {
+		"_postman_id": "318c660b-f782-4760-b1f0-563c82c5f237",
+		"name": "Learn-API-Auth-Pre-Req-Script",
+		"description": "This collection is configured to automatically fetch the bearer token for every request made within it by using Pre-Request script.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36571236"
+	},
+	"item": [
+		{
+			"name": "learn-get-datasources (sample request)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "https://{{domain}}/learn/api/public/v1/dataSources",
+					"protocol": "https",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"learn",
+						"api",
+						"public",
+						"v1",
+						"dataSources"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"const crypto = require('crypto-js');",
+					"const tokenUrl = \"https://\" + pm.variables.get(\"domain\") + \"/learn/api/public/v1/oauth2/token\";",
+					"const username = pm.variables.get(\"username\");",
+					"const password = pm.variables.get(\"password\");",
+					"",
+					"// form data urlencoded",
+					"var formBody = [",
+					"    encodeURIComponent(\"grant_type\") + '=' + encodeURIComponent(\"client_credentials\")",
+					"];",
+					"",
+					"var requestBase = {",
+					"    url: tokenUrl,",
+					"    method: 'POST',",
+					"    header: \"Authorization:Basic \" + crypto.enc.Base64.stringify(crypto.enc.Utf8.parse(username + ':' + password)),",
+					"    body: {",
+					"        mode: 'urlencoded',",
+					"        urlencoded: formBody",
+					"    }",
+					"};",
+					"",
+					"// send request and set the token environment variable",
+					"pm.sendRequest(requestBase, function (err, response) {",
+					"    console.log(response); // Log the response to the Postman console",
+					"    ",
+					"    if (!err) {",
+					"        // Extracting the access_token from the response",
+					"        var responseData = response.json();",
+					"        var token = responseData.access_token;",
+					"        ",
+					"        // Set the extracted value as an environment variable",
+					"        pm.variables.set(\"token\", token);",
+					"    }",
+					"});"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "username",
+			"value": "$APP_KEY",
+			"type": "string"
+		},
+		{
+			"key": "password",
+			"value": "$APP_SECRET",
+			"type": "string"
+		},
+		{
+			"key": "domain",
+			"value": "$LEARN_DOMAIN",
+			"type": "string"
+		}
+	]
+}
