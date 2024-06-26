@@ -2,7 +2,7 @@
 
 ## Description
 
-This collection is configured to automatically fetch the bearer token for every request made within it by using Pre-Request script.
+This collection is configured to automatically fetch the bearer token and set the Authorization header for every request made within it by using Pre-Request script.
 
 ## Installation
 
@@ -19,6 +19,8 @@ To install Postman, follow these steps:
 ### Pre-Request Script
 
 Import the file `Learn-API-Auth-Pre-Req-Script.postman_collection.json`. Go to the Script -> Pre-req section, you can be able to locate the code to fetch the Bearer Token.
+
+You can always use the below script or customize the same based on your need.
 
 ```js
 const crypto = require('crypto-js');
